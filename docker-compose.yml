@@ -1,0 +1,23 @@
+# Local testing:  docker compose up --build   then open http://localhost:3000
+# (login password and PIN below are for local use only; override with a .env file or env vars)
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      APP_PASSWORD: ${APP_PASSWORD:-demo-password}
+      EARNINGS_PIN: ${EARNINGS_PIN:-1234}
+      SESSION_SECRET: ${SESSION_SECRET:-local-only-session-secret-0123456789abcdef}
+      TZ: ${TZ:-Europe/Sofia}
+      DATABASE_PATH: /data/app.db
+      ORIGIN: http://localhost:3000
+      COOKIE_SECURE: 'false' # plain http on localhost; leave unset (secure) in production
+      EARNINGS_TTL_SECONDS: ${EARNINGS_TTL_SECONDS:-600} # unlock lifetime; lower it only to test re-locking
+      SEED_DEMO: ${SEED_DEMO:-1} # fills an empty DB with sample data; remove for real use
+    volumes:
+      - appdata:/data
+    restart: unless-stopped
+
+volumes:
+  appdata:
